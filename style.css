@@ -1,0 +1,122 @@
+.font-cinzel {
+    font-family: 'Cinzel', serif;
+}
+.font-montserrat {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Modern Standard Scrollbar */
+html {
+    --scrollbar-thumb: #FFFFFF;
+    --scrollbar-track: #000000;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    scrollbar-width: thin;
+}
+
+/* Legacy fallback for WebKit/Blink browsers */
+@supports not (scrollbar-color: auto) {
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #E5E5E5;
+    }
+}
+
+/* Scroll-Driven Animations: Shrinking Header */
+@keyframes shrink-header {
+    to {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        background-color: rgba(0, 0, 0, 0.95);
+    }
+}
+
+@supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+    header {
+        animation: shrink-header auto linear both;
+        animation-timeline: scroll(block root);
+        animation-range: 0px 100px;
+    }
+}
+
+/* Scroll-Driven Animations: Reveal Elements */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Active fallback class for JS IntersectionObserver */
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes reveal-in {
+    from {
+        opacity: 0;
+        transform: translateY(45px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {
+        .reveal {
+            animation: reveal-in auto linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 40%;
+            /* Override transition to avoid conflict with native scroll timeline */
+            transition: none;
+        }
+    }
+}
+
+/* Modern Form UX & Input Validation */
+#newsletter-email {
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+#newsletter-email:user-invalid {
+    border-color: #EF4444; /* tailwind red-500 */
+    background-color: rgba(239, 68, 68, 0.05);
+}
+#newsletter-email:user-valid {
+    border-color: #10B981; /* tailwind emerald-500 */
+}
+/* Adjacent sibling selector to reveal error message accessibly */
+#newsletter-email:user-invalid ~ .error-msg {
+    display: block;
+}
+
+/* Custom Dialog & Toast Premium Style */
+#premium-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+    transition: all 0.5s ease;
+}
+
+/* Toast animation details */
+.toast-animate-in {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
