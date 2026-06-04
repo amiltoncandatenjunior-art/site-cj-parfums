@@ -1135,7 +1135,6 @@ function simulateCheckout() {
     if (cartItems.length === 0) return;
     
     closePremiumDialog();
-    showToast("Preparando pedido e conectando ao WhatsApp...", "success");
     
     // 1. Consolidar os itens da sacola
     const consolidated = {};
@@ -1179,19 +1178,22 @@ function simulateCheckout() {
     const encodedText = encodeURIComponent(messageText);
     const whatsappUrl = `https://wa.me/${MAISON_WHATSAPP}?text=${encodedText}`;
     
-    // 4. Redirecionar após 1.5 segundos
-    setTimeout(() => {
+    // 4. Redirecionar de forma síncrona para evitar bloqueadores de pop-up no celular
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+        window.location.href = whatsappUrl;
+    } else {
         window.open(whatsappUrl, '_blank');
-        
-        // Limpa o carrinho local e reinicia os estados de estoque
-        cartItems = [];
-        updateCartBadge();
-        perfumesData.forEach(p => {
-            updateProductStockUI(p.id);
-        });
-        
-        showToast("Redirecionado com sucesso para o WhatsApp da Maison.");
-    }, 1500);
+    }
+    
+    // 5. Limpa o carrinho local e reinicia os estados de estoque imediatamente
+    cartItems = [];
+    updateCartBadge();
+    perfumesData.forEach(p => {
+        updateProductStockUI(p.id);
+    });
+    
+    showToast("Redirecionado com sucesso para o WhatsApp da Maison.");
 }
 
 // Voltar ao Topo Scroll Handler
