@@ -1,3 +1,9 @@
+// --- CONFIGURAÇÃO DO ESTOQUE VIA GOOGLE PLANILHAS ---
+// Substitua o ID abaixo pelo ID da sua planilha pública do Google Sheets.
+// Se deixar como está ("SUA_PLANILHA_ID_AQUI"), o site usará os valores de estoque padrão definidos abaixo.
+const SPREADSHEET_ID = "e/2PACX-1vSxNVB24h96jTvAT5AluSPp_RssZ-L-vjdK70Xx5fJjAmPEY1VBgvVyAMWTr5DjJf_q5m32eUuLiukC"; 
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/" + SPREADSHEET_ID + "/pub?output=csv";
+
 // Banco de Dados Local de Perfumes da CJ Parfums
 const perfumesData = [
     // KIT DE DESCOBERTA (Exclusivo - Mostrado em todas as coleções)
@@ -491,12 +497,65 @@ function initParallax() {
     }, { passive: true });
 }
 
+// Função para carregar o estoque atualizado em tempo real da planilha do Google
+async function fetchStockFromGoogleSheets() {
+    if (SPREADSHEET_ID === "SUA_PLANILHA_ID_AQUI" || !SPREADSHEET_ID) {
+        console.log("Planilha do Google Sheets não configurada. Utilizando estoque local.");
+        return;
+    }
+    
+    try {
+        const response = await fetch(SHEET_URL);
+        if (!response.ok) throw new Error("Erro de conexão com a planilha");
+        
+        const csvText = await response.text();
+        const lines = csvText.split(/\r?\n/);
+        
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            
+            // Suporta tanto vírgula quanto ponto e vírgula como separador
+            const separator = line.includes(';') ? ';' : ',';
+            const parts = line.split(separator);
+            if (parts.length < 2) continue;
+            
+            // Limpa aspas extras e espaços
+            let id = parts[0].replace(/^["']|["']$/g, '').trim();
+            
+            // Normaliza o ID removendo eventuais pontos (ex: set.01 vira set01)
+            id = id.replace('.', '');
+            
+            const stockVal = parseInt(parts[1].replace(/^["']|["']$/g, '').trim(), 10);
+            
+            if (id && !isNaN(stockVal)) {
+                const perfume = perfumesData.find(p => p.id === id);
+                if (perfume) {
+                    perfume.stock = stockVal;
+                }
+            }
+        }
+        
+        console.log("Estoque atualizado com sucesso via Google Sheets!");
+        
+        // Sincroniza a interface gráfica do catálogo com o novo estoque da planilha
+        perfumesData.forEach(p => {
+            updateProductStockUI(p.id);
+        });
+        
+    } catch (err) {
+        console.error("Falha ao carregar estoque em tempo real:", err);
+    }
+}
+
+
 // Initialize dynamic render and scroll effects
 window.addEventListener('DOMContentLoaded', () => {
     renderPerfumes('all');
     initReveal();
     initBackToTop();
     initParallax();
+    fetchStockFromGoogleSheets(); // Busca o estoque real do Google Sheets em segundo plano
 });
 
 // Fallback for browsers that don't support native CSS scroll-driven shrinking header
