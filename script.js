@@ -335,7 +335,7 @@ function renderPerfumes(filter = 'all', useTransition = true) {
                         </div>
                         <div class="space-y-3">
                             <span class="text-[9px] uppercase tracking-[0.25em] text-white/40 font-medium block">
-                                N° ${p.number} — ${p.category === 'feminine' ? 'FEMININA' : (p.category === 'masculine' ? 'MASCULINA' : 'COLEÇÃO COMPLETA')} ${p.id !== 'set01' ? '— 100ml' : '— 5x 15ml'}
+                                N° ${p.number} — ${p.category === 'feminine' ? 'FEMININA' : (p.category === 'masculine' ? 'MASCULINA' : 'COLEÇÃO COMPLETA')}
                             </span>
                             <h3 class="font-cinzel text-2xl font-bold tracking-wide text-white group-hover:text-white/80 transition-colors duration-300">${p.name}</h3>
                             <p class="text-sm font-light text-white/60 leading-relaxed min-h-[72px]">
@@ -369,6 +369,12 @@ function renderPerfumes(filter = 'all', useTransition = true) {
                             <div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] uppercase tracking-widest text-white/50">
                                 <span>Disponibilidade</span>
                                 <span id="stock-${p.id}" class="text-white font-bold font-mono ${p.stock <= 5 ? 'text-red-400 animate-pulse' : ''}">${p.stock > 0 ? `${p.stock} unidades` : 'Esgotado'}</span>
+                            </div>
+
+                            <!-- Volumetria (ML) -->
+                            <div class="mt-3 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] uppercase tracking-widest text-white/50">
+                                <span>Volumetria</span>
+                                <span class="text-white font-bold">${p.id !== 'set01' ? '100ml' : '5x 15ml'}</span>
                             </div>
 
                             ${p.reference ? `
