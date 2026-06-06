@@ -440,11 +440,6 @@ function filterCollection(category) {
 
 // High-Performance Scroll Reveal (using IntersectionObserver)
 function initReveal() {
-    // Check if native scroll-driven animations are supported
-    if (CSS.supports('(animation-timeline: view()) and (animation-range: entry)')) {
-        return; // Let CSS handle the GPU-accelerated scroll animation
-    }
-
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -452,7 +447,7 @@ function initReveal() {
             }
         });
     }, {
-        threshold: 0.15
+        threshold: 0.1
     });
 
     document.querySelectorAll(".reveal").forEach(el => {
@@ -460,13 +455,8 @@ function initReveal() {
     });
 }
 
-// High-Performance Parallax Fallback (using requestAnimationFrame)
-function initParallaxFallback() {
-    // If native scroll-driven animations are supported, let CSS handle it via GPU
-    if (CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
-        return;
-    }
-
+// High-Performance Parallax (using requestAnimationFrame and GPU layers)
+function initParallax() {
     const heroImg = document.querySelector('.hero-parallax-img');
     let tick = false;
 
@@ -477,8 +467,8 @@ function initParallaxFallback() {
                 
                 // 1. Parallax for Hero Image
                 if (heroImg && scrollY < window.innerHeight) {
-                    const speed = 0.15;
-                    heroImg.style.transform = `translateY(${scrollY * speed}px) scale(1.02)`;
+                    const speed = 0.12;
+                    heroImg.style.transform = `translateY(${scrollY * speed}px)`;
                 }
 
                 // 2. Parallax for Catalog Card Images
@@ -490,8 +480,8 @@ function initParallaxFallback() {
                     // Only compute if card is visible inside viewport
                     if (rect.top < viewHeight && rect.bottom > 0) {
                         const relativePos = (rect.top + rect.height / 2) / viewHeight - 0.5;
-                        const maxTravel = 20; // max movement in pixels
-                        img.style.transform = `translateY(${relativePos * maxTravel}px) scale(1.1)`;
+                        const maxTravel = 25; // max movement in pixels
+                        img.style.transform = `translateY(${relativePos * maxTravel}px) scale(1.15)`;
                     }
                 });
 
@@ -507,7 +497,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderPerfumes('all');
     initReveal();
     initBackToTop();
-    initParallaxFallback();
+    initParallax();
 });
 
 // Fallback for browsers that don't support native CSS scroll-driven shrinking header

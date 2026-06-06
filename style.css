@@ -60,28 +60,7 @@ html {
     transform: translateY(0);
 }
 
-@keyframes reveal-in {
-    from {
-        opacity: 0;
-        transform: translateY(45px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    @supports ((animation-timeline: view()) and (animation-range: entry)) {
-        .reveal {
-            animation: reveal-in auto linear both;
-            animation-timeline: view();
-            animation-range: entry 0% entry 40%;
-            /* Override transition to avoid conflict with native scroll timeline */
-            transition: none;
-        }
-    }
-}
+/* Note: Reveal animations are handled accessibly and dynamically via high-performance IntersectionObserver */
 
 /* Modern Form UX & Input Validation */
 #newsletter-email {
@@ -121,48 +100,14 @@ html {
     }
 }
 
-/* Scroll-Driven Parallax: Hero Image */
-@keyframes hero-parallax {
-    from {
-        transform: translateY(0) scale(1);
-    }
-    to {
-        transform: translateY(60px) scale(1.03);
-    }
+/* Parallax Image Styles (Positioning and transitions are updated dynamically on scroll) */
+.hero-parallax-img {
+    transition: transform 0.15s ease-out;
+    will-change: transform;
 }
 
-@supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
-    @media (prefers-reduced-motion: no-preference) {
-        .hero-parallax-img {
-            animation: hero-parallax auto linear both;
-            animation-timeline: scroll(block root);
-            animation-range: 0px 100vh;
-        }
-    }
-}
-
-/* Scroll-Driven Parallax: Catalog Card Images */
 .card-parallax-img {
-    transform: scale(1.1);
-    transition: transform 0.1s ease-out;
-}
-
-@keyframes card-parallax {
-    from {
-        transform: translateY(-25px) scale(1.1);
-    }
-    to {
-        transform: translateY(25px) scale(1.1);
-    }
-}
-
-@supports ((animation-timeline: view()) and (animation-range: entry)) {
-    @media (prefers-reduced-motion: no-preference) {
-        .card-parallax-img {
-            animation: card-parallax auto linear both;
-            animation-timeline: view();
-            animation-range: entry 0% exit 100%;
-            transition: none;
-        }
-    }
+    transform: scale(1.15); /* Slightly larger zoom to allow vertical motion */
+    transition: transform 0.15s ease-out;
+    will-change: transform;
 }
