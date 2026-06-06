@@ -335,7 +335,7 @@ function renderPerfumes(filter = 'all', useTransition = true) {
                         </div>
                         <div class="space-y-3">
                             <span class="text-[9px] uppercase tracking-[0.25em] text-white/40 font-medium block">
-                                N° ${p.number} — ${p.category === 'feminine' ? 'FEMININA' : (p.category === 'masculine' ? 'MASCULINA' : 'COLEÇÃO COMPLETA')}
+                                N° ${p.number} — ${p.category === 'feminine' ? 'FEMININA' : (p.category === 'masculine' ? 'MASCULINA' : 'COLEÇÃO COMPLETA')} ${p.id !== 'set01' ? '— 100ml' : '— 5x 15ml'}
                             </span>
                             <h3 class="font-cinzel text-2xl font-bold tracking-wide text-white group-hover:text-white/80 transition-colors duration-300">${p.name}</h3>
                             <p class="text-sm font-light text-white/60 leading-relaxed min-h-[72px]">
