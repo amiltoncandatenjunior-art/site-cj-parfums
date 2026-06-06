@@ -101,11 +101,6 @@ html {
 }
 
 /* Parallax Image Styles (Positioning and transitions are updated dynamically on scroll) */
-.hero-parallax-img {
-    transition: transform 0.15s ease-out;
-    will-change: transform;
-}
-
 .card-parallax-img {
     transform: scale(1.15); /* Slightly larger zoom to allow vertical motion */
     transition: transform 0.15s ease-out;

@@ -457,7 +457,6 @@ function initReveal() {
 
 // High-Performance Parallax (using requestAnimationFrame and GPU layers)
 function initParallax() {
-    const heroImg = document.querySelector('.hero-parallax-img');
     let tick = false;
 
     window.addEventListener('scroll', () => {
@@ -465,13 +464,7 @@ function initParallax() {
             window.requestAnimationFrame(() => {
                 const scrollY = window.scrollY;
                 
-                // 1. Parallax for Hero Image
-                if (heroImg && scrollY < window.innerHeight) {
-                    const speed = 0.12;
-                    heroImg.style.transform = `translateY(${scrollY * speed}px)`;
-                }
-
-                // 2. Parallax for Catalog Card Images
+                // Parallax for Catalog Card Images
                 const cardImgs = document.querySelectorAll('.card-parallax-img');
                 cardImgs.forEach(img => {
                     const rect = img.getBoundingClientRect();
