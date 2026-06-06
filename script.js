@@ -297,12 +297,12 @@ function renderPerfumes(filter = 'all', useTransition = true) {
             if (p.comingSoon) {
                 // Card especial "Em Breve"
                 cardHtml = `
-                <div class="group bg-armani-charcoal/20 border border-white/5 p-6 flex flex-col justify-between transition-all duration-700 hover:shadow-gold-glow transform hover:-translate-y-1.5 relative overflow-hidden select-none" style="view-transition-name: perfume-${p.id};">
+                <div class="reveal group bg-armani-charcoal/20 border border-white/5 p-6 flex flex-col justify-between transition-all duration-700 hover:shadow-gold-glow transform hover:-translate-y-1.5 relative overflow-hidden select-none" style="view-transition-name: perfume-${p.id};">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 z-10"></div>
                     <div>
                         <div class="overflow-hidden border border-white/5 bg-black relative mb-6 aspect-[4/5]">
                             <div class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent blur-md animate-pulse"></div>
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transform scale-100 opacity-20 filter grayscale blur-[2px]">
+                            <img src="${p.image}" alt="${p.name}" class="card-parallax-img w-full h-full object-cover transform scale-100 opacity-20 filter grayscale blur-[2px]">
                             <div class="absolute inset-0 flex items-center justify-center z-20">
                                 <span class="text-[10px] tracking-[0.4em] text-white/50 font-bold uppercase animate-pulse">EM BREVE</span>
                             </div>
@@ -325,10 +325,10 @@ function renderPerfumes(filter = 'all', useTransition = true) {
             } else {
                 // Card de produto padrão
                 cardHtml = `
-                <div class="group bg-armani-charcoal/20 border border-white/5 hover:border-white/20 p-6 flex flex-col justify-between transition-all duration-700 hover:shadow-gold-glow transform hover:-translate-y-1.5" style="view-transition-name: perfume-${p.id};">
+                <div class="reveal group bg-armani-charcoal/20 border border-white/5 hover:border-white/20 p-6 flex flex-col justify-between transition-all duration-700 hover:shadow-gold-glow transform hover:-translate-y-1.5" style="view-transition-name: perfume-${p.id};">
                     <div>
                         <div class="overflow-hidden border border-white/5 bg-black relative mb-6 aspect-[4/5]">
-                            <img src="${p.image}" alt="${p.name}" loading="lazy" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-[1500ms]">
+                            <img src="${p.image}" alt="${p.name}" loading="lazy" class="card-parallax-img w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-[1500ms]">
                             <div class="absolute top-4 left-4 bg-black/85 border border-white/10 text-white text-[9px] uppercase tracking-[0.2em] px-3 py-1 font-semibold">
                                 ${p.tag}
                             </div>
@@ -396,6 +396,9 @@ function renderPerfumes(filter = 'all', useTransition = true) {
             
             grid.innerHTML += cardHtml;
         });
+
+        // Re-initialize dynamic scroll reveals (for browsers without CSS Scroll Timeline support)
+        initReveal();
     };
     
     if (!useTransition) {
@@ -457,11 +460,54 @@ function initReveal() {
     });
 }
 
+// High-Performance Parallax Fallback (using requestAnimationFrame)
+function initParallaxFallback() {
+    // If native scroll-driven animations are supported, let CSS handle it via GPU
+    if (CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
+        return;
+    }
+
+    const heroImg = document.querySelector('.hero-parallax-img');
+    let tick = false;
+
+    window.addEventListener('scroll', () => {
+        if (!tick) {
+            window.requestAnimationFrame(() => {
+                const scrollY = window.scrollY;
+                
+                // 1. Parallax for Hero Image
+                if (heroImg && scrollY < window.innerHeight) {
+                    const speed = 0.15;
+                    heroImg.style.transform = `translateY(${scrollY * speed}px) scale(1.02)`;
+                }
+
+                // 2. Parallax for Catalog Card Images
+                const cardImgs = document.querySelectorAll('.card-parallax-img');
+                cardImgs.forEach(img => {
+                    const rect = img.getBoundingClientRect();
+                    const viewHeight = window.innerHeight;
+                    
+                    // Only compute if card is visible inside viewport
+                    if (rect.top < viewHeight && rect.bottom > 0) {
+                        const relativePos = (rect.top + rect.height / 2) / viewHeight - 0.5;
+                        const maxTravel = 20; // max movement in pixels
+                        img.style.transform = `translateY(${relativePos * maxTravel}px) scale(1.1)`;
+                    }
+                });
+
+                tick = false;
+            });
+            tick = true;
+        }
+    }, { passive: true });
+}
+
 // Initialize dynamic render and scroll effects
 window.addEventListener('DOMContentLoaded', () => {
     renderPerfumes('all');
     initReveal();
     initBackToTop();
+    initParallaxFallback();
 });
 
 // Fallback for browsers that don't support native CSS scroll-driven shrinking header
