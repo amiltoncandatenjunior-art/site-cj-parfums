@@ -437,18 +437,21 @@ function filterCollection(category) {
     activeFilterCategory = category;
     const filterBtns = document.querySelectorAll('.filter-btn');
     filterBtns.forEach(btn => {
-        btn.classList.remove('bg-white', 'text-black', 'font-semibold');
-        btn.classList.add('border-white/10', 'text-white/60');
+        // Reseta os botões inativos (cor cinza, texto branco no hover)
+        btn.classList.remove('bg-white', 'text-black', 'font-semibold', 'hover:text-black');
+        btn.classList.add('border-white/10', 'text-white/60', 'hover:text-white');
     });
     
     const activeBtn = document.getElementById(`filter-${category}`);
     if (activeBtn) {
-        activeBtn.classList.remove('border-white/10', 'text-white/60');
-        activeBtn.classList.add('bg-white', 'text-black', 'font-semibold');
+        // Define o botão ativo (fundo branco, texto preto mesmo no hover de telas de toque)
+        activeBtn.classList.remove('border-white/10', 'text-white/60', 'hover:text-white');
+        activeBtn.classList.add('bg-white', 'text-black', 'font-semibold', 'hover:text-black');
     }
     
     renderPerfumes(category);
 }
+
 
 // High-Performance Scroll Reveal (using IntersectionObserver)
 function initReveal() {
